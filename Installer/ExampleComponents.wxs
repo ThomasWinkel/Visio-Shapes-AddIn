@@ -1,0 +1,36 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:visio="http://schemas.microsoft.com/wix/Visio">
+	<Fragment>
+		<ComponentGroup Id="ExampleComponents" Directory="INSTALLFOLDER">
+			<!-- Add the addin dll to the setup. Reference using project referencing -->
+			<Component>
+				<File Source="$(var.VisioAddin.TargetPath)" >
+				</File>
+			</Component>
+			
+			<!-- VSTO framework file -->
+			<Component>
+				<File Source="$(var.VisioAddin.TargetDir)Microsoft.Office.Tools.Common.v4.0.Utilities.dll"></File>
+			</Component>
+
+			<!-- Add the addin manifest file -->
+			<Component>
+				<File Source="$(var.VisioAddin.TargetPath).manifest"></File>
+			</Component>
+
+			<Component>
+				<File Source="$(var.VisioAddin.TargetPath).config"></File>
+			</Component>
+
+			<!--  The .vsto file is addin discovery file. Set up registry to point to this file using |vstolocal -->
+			<Component>
+				<File Source="$(var.VisioAddin.TargetDir)$(var.VisioAddin.TargetName).vsto">
+					<visio:PublishAddin />
+				</File>
+			</Component>
+
+			<Component>
+				<File Source="$(var.VisioAddin.TargetDir)\Newtonsoft.Json.dll" />
+			</Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>

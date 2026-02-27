@@ -1,0 +1,10 @@
+﻿<Project Sdk="WixToolset.Sdk/5.0.1">
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="5.0.1" />
+    <ProjectReference Include="..\VisioAddin\VisioAddin.csproj" />
+    <WixExtension Include="VisioWixExtension">
+      <HintPath>wixVisio\VisioWixExtension.dll</HintPath>
+      <Name>VisioWixExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+</Project>
