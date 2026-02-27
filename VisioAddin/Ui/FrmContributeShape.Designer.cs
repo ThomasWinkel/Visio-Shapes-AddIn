@@ -34,15 +34,17 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.tbName = new System.Windows.Forms.TextBox();
-            this.tbPrompt = new System.Windows.Forms.TextBox();
             this.tbKeywords = new System.Windows.Forms.TextBox();
+            this.tbPrompt = new System.Windows.Forms.TextBox();
+            this.tbName = new System.Windows.Forms.TextBox();
+            this.cbTeam = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnContribute
             // 
-            this.btnContribute.Location = new System.Drawing.Point(292, 247);
+            this.btnContribute.Location = new System.Drawing.Point(297, 296);
             this.btnContribute.Name = "btnContribute";
             this.btnContribute.Size = new System.Drawing.Size(75, 23);
             this.btnContribute.TabIndex = 0;
@@ -52,7 +54,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(211, 247);
+            this.btnCancel.Location = new System.Drawing.Point(216, 296);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 1;
@@ -95,27 +97,12 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Location = new System.Drawing.Point(12, 61);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(355, 229);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Shape Properties";
-            // 
-            // tbName
-            // 
-            this.tbName.Location = new System.Drawing.Point(81, 32);
-            this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(256, 22);
-            this.tbName.TabIndex = 5;
-            // 
-            // tbPrompt
-            // 
-            this.tbPrompt.Location = new System.Drawing.Point(81, 60);
-            this.tbPrompt.Multiline = true;
-            this.tbPrompt.Name = "tbPrompt";
-            this.tbPrompt.Size = new System.Drawing.Size(256, 75);
-            this.tbPrompt.TabIndex = 6;
             // 
             // tbKeywords
             // 
@@ -125,11 +112,45 @@
             this.tbKeywords.Size = new System.Drawing.Size(256, 75);
             this.tbKeywords.TabIndex = 6;
             // 
+            // tbPrompt
+            // 
+            this.tbPrompt.Location = new System.Drawing.Point(81, 60);
+            this.tbPrompt.Multiline = true;
+            this.tbPrompt.Name = "tbPrompt";
+            this.tbPrompt.Size = new System.Drawing.Size(256, 75);
+            this.tbPrompt.TabIndex = 6;
+            // 
+            // tbName
+            // 
+            this.tbName.Location = new System.Drawing.Point(81, 32);
+            this.tbName.Name = "tbName";
+            this.tbName.Size = new System.Drawing.Size(256, 22);
+            this.tbName.TabIndex = 5;
+            // 
+            // cbTeam
+            // 
+            this.cbTeam.FormattingEnabled = true;
+            this.cbTeam.Location = new System.Drawing.Point(93, 12);
+            this.cbTeam.Name = "cbTeam";
+            this.cbTeam.Size = new System.Drawing.Size(256, 24);
+            this.cbTeam.TabIndex = 6;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(18, 15);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(46, 16);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Team:";
+            // 
             // FrmContributeShape
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(384, 276);
+            this.ClientSize = new System.Drawing.Size(384, 331);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.cbTeam);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnContribute);
@@ -139,6 +160,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -153,5 +175,7 @@
         private System.Windows.Forms.TextBox tbKeywords;
         private System.Windows.Forms.TextBox tbPrompt;
         private System.Windows.Forms.TextBox tbName;
+        private System.Windows.Forms.ComboBox cbTeam;
+        private System.Windows.Forms.Label label4;
     }
 }

@@ -7,12 +7,20 @@ using System.Net.Http;
 
 namespace VisioAddin.Models
 {
+    internal class TeamItem
+    {
+        public int? Id { get; set; }
+        public string Name { get; set; }
+        public override string ToString() => Name;
+    }
+
     internal class OnlineShape
     {
         public String Name { get; set; }
         public String Prompt { get; set; }
         public String Keywords { get; set; }
         public String DataObject { get; set; }
+        public int? TeamId { get; set; }
     }
 
     internal class OnlineStencil
@@ -27,10 +35,11 @@ namespace VisioAddin.Models
         public string Categories { get; set; }
         public string Tags { get; set; }
         public string Comments { get; set; }
+        public int? TeamId { get; set; }
         public List<OnlineShape> Shapes { get; set; }
 
         public OnlineStencil()
-        { 
+        {
             Shapes = new List<OnlineShape>();
         }
     }

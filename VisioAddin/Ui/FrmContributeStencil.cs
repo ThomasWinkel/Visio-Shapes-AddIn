@@ -30,18 +30,59 @@ namespace VisioAddin.Ui
                     lbStencils.Items.Add(doc.Name);
                 }
             }
+
+            cbTeam.SelectedIndexChanged += cbTeam_SelectedIndexChanged;
+            this.Load += async (s, e) => await LoadTeamsAsync();
+        }
+
+        private async Task LoadTeamsAsync()
+        {
+            var items = new List<Models.TeamItem>
+            {
+                new Models.TeamItem { Id = null, Name = "Persönlich" }
+            };
+
+            try
+            {
+                string token = Globals.ThisAddIn.ServerHandler.CurrentServerToken;
+                string url = Globals.ThisAddIn.ServerHandler.CurrentServerUrl + "/get_user_teams";
+
+                using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    var response = await client.SendAsync(request).ConfigureAwait(false);
+                    string json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var teams = JsonConvert.DeserializeObject<List<Models.TeamItem>>(json);
+                    if (teams != null)
+                        items.AddRange(teams);
+                }
+            }
+            catch { }
+
+            cbTeam.Invoke(new Action(() =>
+            {
+                cbTeam.Items.Clear();
+                foreach (var item in items)
+                    cbTeam.Items.Add(item);
+            }));
+        }
+
+        private void cbTeam_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateContributeButton();
         }
 
         private async void btnContribute_Click(object sender, EventArgs e)
         {
             try
             {
-                await SubmitStencilAsync().ConfigureAwait(true);
+                await SubmitStencilAsync().ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to submit stencil: {ex.Message}", "Upload Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string msg = ex.Message;
+                Invoke(new Action(() => MessageBox.Show($"Failed to submit stencil: {msg}", "Upload Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error)));
             }
         }
 
@@ -80,6 +121,7 @@ namespace VisioAddin.Ui
                 onlineStencil.Categories = stencil.Category;
                 onlineStencil.Tags = stencil.Keywords;
                 onlineStencil.Comments = stencil.Description;
+                onlineStencil.TeamId = (cbTeam.SelectedItem as Models.TeamItem)?.Id;
 
                 List<string> formats = new List<string>
                 {
@@ -197,14 +239,12 @@ namespace VisioAddin.Ui
 
         private void lbStencils_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lbStencils.SelectedItems.Count > 0)
-            {
-                btnContribute.Enabled = true;
-            }
-            else
-            {
-                btnContribute.Enabled = false;
-            }
+            UpdateContributeButton();
+        }
+
+        private void UpdateContributeButton()
+        {
+            btnContribute.Enabled = lbStencils.SelectedItems.Count > 0 && cbTeam.SelectedIndex >= 0;
         }
 
         public static byte[] ImageToByte2(Image img)

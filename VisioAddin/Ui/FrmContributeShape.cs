@@ -31,6 +31,47 @@ namespace VisioAddin.Ui
                 tbPrompt.Text = Master.Prompt;
                 tbKeywords.Text = Master.PageSheet.CellsSRC[(short)Visio.VisSectionIndices.visSectionObject, (short)Visio.VisRowIndices.visRowMisc, (short)Visio.VisCellIndices.visObjKeywords].ResultStr[""];
             }
+
+            btnContribute.Enabled = false;
+            cbTeam.SelectedIndexChanged += cbTeam_SelectedIndexChanged;
+            this.Load += async (s, e) => await LoadTeamsAsync();
+        }
+
+        private async Task LoadTeamsAsync()
+        {
+            var items = new List<Models.TeamItem>
+            {
+                new Models.TeamItem { Id = null, Name = "Persönlich" }
+            };
+
+            try
+            {
+                string token = Globals.ThisAddIn.ServerHandler.CurrentServerToken;
+                string url = Globals.ThisAddIn.ServerHandler.CurrentServerUrl + "/get_user_teams";
+
+                using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    var response = await client.SendAsync(request).ConfigureAwait(false);
+                    string json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var teams = JsonConvert.DeserializeObject<List<Models.TeamItem>>(json);
+                    if (teams != null)
+                        items.AddRange(teams);
+                }
+            }
+            catch { }
+
+            cbTeam.Invoke(new Action(() =>
+            {
+                cbTeam.Items.Clear();
+                foreach (var item in items)
+                    cbTeam.Items.Add(item);
+            }));
+        }
+
+        private void cbTeam_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            btnContribute.Enabled = cbTeam.SelectedIndex >= 0;
         }
 
         public async Task Submit()
@@ -90,6 +131,7 @@ namespace VisioAddin.Ui
             onlineShape.Prompt = tbPrompt.Text;
             onlineShape.Keywords = tbKeywords.Text;
             onlineShape.DataObject = JsonConvert.SerializeObject(dictDataObject);
+            onlineShape.TeamId = (cbTeam.SelectedItem as Models.TeamItem)?.Id;
 
             string json = JsonConvert.SerializeObject(onlineShape);
 
@@ -166,13 +208,14 @@ namespace VisioAddin.Ui
         {
             try
             {
-                await Submit().ConfigureAwait(true); // Stay on UI thread for Close()
-                this.Close();
+                await Submit().ConfigureAwait(false);
+                Invoke(new Action(() => this.Close()));
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to submit shape: {ex.Message}", "Upload Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string msg = ex.Message;
+                Invoke(new Action(() => MessageBox.Show($"Failed to submit shape: {msg}", "Upload Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error)));
             }
         }
 
