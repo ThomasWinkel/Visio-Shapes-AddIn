@@ -156,13 +156,10 @@ namespace VisioAddin.Ui
 
                     string imagePath = Path.Combine(Path.GetTempPath(), "image.png");
                     master.Export(imagePath);
-                    Image image;
-                    using (FileStream fileStream = new FileStream(imagePath, FileMode.Open))
-                    {
-                        image = Image.FromStream(fileStream);
-                    }
-                    File.Delete(imagePath);
+                    Image image = Image.FromFile(imagePath);
                     byte[] paramFileStream = ImageToByte2(image);
+                    image.Dispose();
+                    File.Delete(imagePath);
 
                     // StreamContent takes ownership of MemoryStream and disposes it
                     MemoryStream memoryStream = new MemoryStream(paramFileStream);

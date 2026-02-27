@@ -118,6 +118,8 @@ namespace VisioAddin
 
         private void Search(string search)
         {
+            if (webView.CoreWebView2 == null) return;
+
             string postDataString = "search=" + search;
             UTF8Encoding utfEncoding = new UTF8Encoding();
             byte[] postData = utfEncoding.GetBytes(postDataString);

@@ -212,7 +212,7 @@ namespace VisioAddin
         private void OnBeforeWindowClosed(Window visioWindow)
         {
             if (PanelFrameClosed != null)
-                PanelFrameClosed(_visioWindow.ParentWindow);
+                PanelFrameClosed(visioWindow?.ParentWindow);
 
             DestroyWindow();
         }

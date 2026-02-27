@@ -117,13 +117,10 @@ namespace VisioAddin.Ui
 
             string imagePath = Path.Combine(Path.GetTempPath(), "image.png");
             Master.Export(imagePath);
-            Image image;
-            using (FileStream fileStream = new FileStream(imagePath, FileMode.Open))
-            {
-                image = Image.FromStream(fileStream);
-            }
-            File.Delete(imagePath);
+            Image image = Image.FromFile(imagePath);
             byte[] paramFileStream = ImageToByte2(image);
+            image.Dispose();
+            File.Delete(imagePath);
 
             Models.OnlineShape onlineShape = new Models.OnlineShape();
 
