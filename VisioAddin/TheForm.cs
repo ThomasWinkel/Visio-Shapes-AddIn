@@ -73,6 +73,8 @@ namespace VisioAddin
 
         private void Login()
         {
+            if (webView.CoreWebView2 == null) return;
+
             string postDataString = "token=" + Globals.ThisAddIn.ServerHandler.CurrentServerToken;
             UTF8Encoding utfEncoding = new UTF8Encoding();
             byte[] postData = utfEncoding.GetBytes(postDataString);
