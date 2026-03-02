@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,6 +21,7 @@ namespace VisioAddin.Ui
         public FrmContributeShape(Visio.Shape shape)
         {
             InitializeComponent();
+            cbTeam.DropDownStyle = ComboBoxStyle.DropDownList;
             Shape = shape;
             Master = shape.Master;
 
@@ -41,6 +41,7 @@ namespace VisioAddin.Ui
         {
             var items = new List<Models.TeamItem>
             {
+                new Models.TeamItem { Id = null, Name = "Select..." },
                 new Models.TeamItem { Id = null, Name = "Persönlich" }
             };
 
@@ -66,12 +67,16 @@ namespace VisioAddin.Ui
                 cbTeam.Items.Clear();
                 foreach (var item in items)
                     cbTeam.Items.Add(item);
+
+                bool hasTeams = items.Count > 2;
+                cbTeam.Enabled = hasTeams;
+                cbTeam.SelectedIndex = hasTeams ? 0 : 1;
             }));
         }
 
         private void cbTeam_SelectedIndexChanged(object sender, EventArgs e)
         {
-            btnContribute.Enabled = cbTeam.SelectedIndex >= 0;
+            btnContribute.Enabled = cbTeam.SelectedIndex > 0;
         }
 
         public async Task Submit()
@@ -137,14 +142,7 @@ namespace VisioAddin.Ui
                 content.Add(new StringContent(json, Encoding.UTF8, "application/json"), "json");
                 content.Add(new StreamContent(new MemoryStream(paramFileStream)), "image", "image.png");
 
-                // Use singleton HttpClient with per-request headers
                 string token = Globals.ThisAddIn.ServerHandler.CurrentServerToken;
-                if (Globals.ThisAddIn.ServerHandler.CurrentServerUrl.StartsWith("https"))
-                {
-                    ServicePointManager.Expect100Continue = true;
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-                }
-
                 using (var request = new HttpRequestMessage(HttpMethod.Post, Globals.ThisAddIn.ServerHandler.CurrentServerUrl + "/add_shape"))
                 {
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);

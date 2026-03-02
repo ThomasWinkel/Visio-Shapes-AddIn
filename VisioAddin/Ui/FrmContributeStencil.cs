@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Drawing;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -22,6 +21,8 @@ namespace VisioAddin.Ui
         public FrmContributeStencil()
         {
             InitializeComponent();
+            cbTeam.DropDownStyle = ComboBoxStyle.DropDownList;
+            btnContribute.Enabled = false;
 
             foreach (Visio.Document doc in Globals.ThisAddIn.Application.Documents)
             {
@@ -39,6 +40,7 @@ namespace VisioAddin.Ui
         {
             var items = new List<Models.TeamItem>
             {
+                new Models.TeamItem { Id = null, Name = "Select..." },
                 new Models.TeamItem { Id = null, Name = "Persönlich" }
             };
 
@@ -64,6 +66,10 @@ namespace VisioAddin.Ui
                 cbTeam.Items.Clear();
                 foreach (var item in items)
                     cbTeam.Items.Add(item);
+
+                bool hasTeams = items.Count > 2;
+                cbTeam.Enabled = hasTeams;
+                cbTeam.SelectedIndex = hasTeams ? 0 : 1;
             }));
         }
 
@@ -174,14 +180,7 @@ namespace VisioAddin.Ui
                 StringContent stringContent = new StringContent(json, Encoding.UTF8, "application/json");
                 content.Add(stringContent, "json");
 
-                // Use singleton HttpClient with per-request headers
                 string token = Globals.ThisAddIn.ServerHandler.CurrentServerToken;
-                if (Globals.ThisAddIn.ServerHandler.CurrentServerUrl.StartsWith("https"))
-                {
-                    ServicePointManager.Expect100Continue = true;
-                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-                }
-
                 using (var request = new HttpRequestMessage(HttpMethod.Post, Globals.ThisAddIn.ServerHandler.CurrentServerUrl + "/add_stencil"))
                 {
                     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -205,7 +204,6 @@ namespace VisioAddin.Ui
 
         private void ShowResultAndClose(string strResponse)
         {
-            MessageBox.Show(strResponse);
             if (strResponse == "Failed")
             {
                 MessageBox.Show("Upload failed, check credentials.");
@@ -241,7 +239,7 @@ namespace VisioAddin.Ui
 
         private void UpdateContributeButton()
         {
-            btnContribute.Enabled = lbStencils.SelectedItems.Count > 0 && cbTeam.SelectedIndex >= 0;
+            btnContribute.Enabled = lbStencils.SelectedItems.Count > 0 && cbTeam.SelectedIndex > 0;
         }
 
         public static byte[] ImageToByte2(Image img)

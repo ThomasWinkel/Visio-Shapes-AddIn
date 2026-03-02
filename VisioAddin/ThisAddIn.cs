@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Windows.Forms;
 
 namespace VisioAddin
@@ -17,6 +18,7 @@ namespace VisioAddin
 
         private void ThisAddIn_Startup(object sender, EventArgs e)
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             _panelManager = new PanelManager(this);
         }
 
