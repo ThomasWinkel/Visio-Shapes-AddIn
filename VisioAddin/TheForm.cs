@@ -122,27 +122,12 @@ namespace VisioAddin
         {
             if (webView.CoreWebView2 == null) return;
 
-            string postDataString = "search=" + search;
-            UTF8Encoding utfEncoding = new UTF8Encoding();
-            byte[] postData = utfEncoding.GetBytes(postDataString);
-            MemoryStream postDataStream = new MemoryStream(postDataString.Length);
-            postDataStream.Write(postData, 0, postData.Length);
-            postDataStream.Seek(0, SeekOrigin.Begin);
-
-            CoreWebView2WebResourceRequest webResourceRequest =
-                webView.CoreWebView2.Environment.CreateWebResourceRequest(
-                Globals.ThisAddIn.ServerHandler.CurrentServerUrl,
-                "POST",
-                postDataStream,
-                "Content-Type: application/x-www-form-urlencoded\r\n");
-            try
-            {
-                webView.CoreWebView2.NavigateWithWebResourceRequest(webResourceRequest);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Search navigation failed: {ex.Message}");
-            }
+            string safeSearch = search.Replace("\\", "\\\\").Replace("\"", "\\\"");
+            _ = webView.CoreWebView2.ExecuteScriptAsync(
+                "fetch('/get_shapes?sort=date_desc')" +
+                ".then(r => r.json())" +
+                $".then(shapes => {{ allShapes = shapes; document.getElementById('search').value = \"{safeSearch}\"; filterShapes(); }});"
+            );
         }
 
         // Open original preview in standard browser

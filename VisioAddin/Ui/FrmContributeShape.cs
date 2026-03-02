@@ -175,7 +175,6 @@ namespace VisioAddin.Ui
                 docStencil.Close();
             }
 
-            MessageBox.Show(strResponse);
             if (strResponse == "Failed")
             {
                 MessageBox.Show("Upload failed, check credentials.");
